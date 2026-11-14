@@ -1,0 +1,69 @@
+name: jo_modas
+description: "Jô Modas — app mobile da loja de moda (Flutter + API Laravel)."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # Navegação declarativa com rotas nomeadas (lib/core/routes)
+  go_router: ^17.1.0
+
+  # Formatação de moeda em pt_BR
+  intl: ^0.20.3
+
+  # Chamadas HTTP: API Laravel e ViaCEP
+  http: ^1.2.0
+
+  # Token do Sanctum e carrinho guardados no aparelho
+  shared_preferences: ^2.3.0
+
+  # Abre o WhatsApp com o pedido
+  url_launcher: ^6.3.0
+
+  # Escolher a foto do produto na galeria / no computador (área do admin)
+  image_picker: ^1.2.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+
+  # Fontes da marca (Google Fonts, licença OFL):
+  # Cinzel = nome da loja; Cormorant Garamond = títulos; Jost = textos.
+  fonts:
+    - family: Cinzel
+      fonts:
+        - asset: assets/fonts/Cinzel-SemiBold.ttf
+          weight: 600
+    - family: CormorantGaramond
+      fonts:
+        - asset: assets/fonts/CormorantGaramond-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/CormorantGaramond-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/CormorantGaramond-Bold.ttf
+          weight: 700
+    - family: Jost
+      fonts:
+        - asset: assets/fonts/Jost-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Jost-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Jost-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Jost-Bold.ttf
+          weight: 700

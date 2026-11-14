@@ -1,0 +1,14 @@
+.dart_tool/
+build/
+.flutter-plugins*
+.packages
+pubspec.lock
+*.iml
+.idea/
+.vscode/
+# Nada de credenciais no repositório
+.env
+*.jks
+key.properties
+google-services.json
+firebase_options.dart
