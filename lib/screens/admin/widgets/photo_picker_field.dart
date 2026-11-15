@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -53,8 +54,6 @@ class PhotoPickerField extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              // Com foto, o título do card já basta; o aviso só aparece sem
-              // foto ou durante o envio.
               if (isUploading || !hasPhoto) ...<Widget>[
                 Text(
                   isUploading

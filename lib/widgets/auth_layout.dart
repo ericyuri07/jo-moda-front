@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/theme/app_colors.dart';
+import '../core/theme/app_radius.dart';
 import '../core/theme/app_shadows.dart';
 import '../core/theme/app_sizes.dart';
 import '../core/theme/app_spacing.dart';
@@ -33,7 +34,6 @@ class AuthLayout extends StatelessWidget {
       backgroundColor: AppColors.authBackgroundDeep,
       body: DecoratedBox(
         decoration: const BoxDecoration(
-          // Brilho dourado suave atrás da logo, escurecendo até as bordas.
           gradient: RadialGradient(
             center: Alignment(0, -0.55),
             radius: 0.9,

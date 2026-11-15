@@ -9,7 +9,7 @@ import '../../../core/utils/validators.dart';
 import '../../../models/category.dart';
 import '../../../models/category_input.dart';
 import '../../../services/api_exception.dart';
-import '../photo_uploader.dart';
+import '../../../services/service_locator.dart';
 import 'photo_picker_field.dart';
 
 /// Janela para criar ou editar uma categoria: foto (enviada na hora) e nome.
@@ -27,7 +27,6 @@ class CategoryFormDialog extends StatefulWidget {
 
 class _CategoryFormDialogState extends State<CategoryFormDialog> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final PhotoUploader _uploader = PhotoUploader();
   late final TextEditingController _nameController = TextEditingController(
     text: widget.category?.name ?? '',
   );
@@ -49,7 +48,7 @@ class _CategoryFormDialogState extends State<CategoryFormDialog> {
     });
 
     try {
-      final String? url = await _uploader.pickAndUpload();
+      final String? url = await photoUploader.pickAndUpload();
       if (!mounted) return;
       if (url != null) setState(() => _imageUrl = url);
     } on ApiException catch (e) {
@@ -132,7 +131,6 @@ class _CategoryFormDialogState extends State<CategoryFormDialog> {
           child: const Text(AppStrings.cancel),
         ),
         TextButton(
-          // Espera a foto terminar de subir antes de salvar.
           onPressed: _isUploading ? null : _submit,
           child: const Text(AppStrings.save),
         ),

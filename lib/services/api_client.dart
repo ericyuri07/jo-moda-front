@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../core/constants/app_config.dart';
-import '../core/theme/app_sizes.dart';
 import 'api_exception.dart';
 import 'token_storage.dart';
 
@@ -90,7 +89,7 @@ class ApiClient {
     try {
       final http.StreamedResponse streamed = await _http
           .send(request)
-          .timeout(AppDurations.requestTimeout);
+          .timeout(AppConfig.requestTimeout);
       final http.Response response = await http.Response.fromStream(streamed);
 
       if (response.statusCode == 401 && token != null) {

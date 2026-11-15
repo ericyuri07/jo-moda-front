@@ -5,6 +5,8 @@ import '../../core/constants/app_config.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_durations.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
@@ -61,7 +63,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     try {
       final Product product = await productService.getProduct(widget.productId);
 
-      // "Veja também" é um extra: se falhar, a tela segue sem ele.
       List<Product> related = const <Product>[];
       try {
         related = await productService.getRelated(product);
@@ -121,7 +122,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   void _selectColor(Product product, String color) {
     setState(() {
       _selectedColor = color;
-      // O tamanho escolhido pode não existir (ou estar esgotado) nesta cor.
       if (_selectedSize != null && !_sizeAvailable(product, _selectedSize!)) {
         _selectedSize = null;
       }
@@ -181,7 +181,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ShopScaffold(body: _buildBody());
+    return ListenableBuilder(
+      listenable: cartService,
+      builder: (context, _) => ShopScaffold(
+        cartCount: cartService.totalQuantity,
+        user: authService.currentUser,
+        onSignOut: signOutAndClearCart,
+        body: _buildBody(),
+      ),
+    );
   }
 
   Widget _buildBody() {

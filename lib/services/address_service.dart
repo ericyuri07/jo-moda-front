@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 
 import '../core/constants/app_config.dart';
 import '../core/constants/app_strings.dart';
-import '../core/theme/app_sizes.dart';
 import '../models/cep_address.dart';
 import 'api_exception.dart';
 
@@ -23,7 +22,7 @@ class AddressService {
     try {
       final http.Response response = await _http
           .get(uri)
-          .timeout(AppDurations.requestTimeout);
+          .timeout(AppConfig.requestTimeout);
 
       if (response.statusCode != 200) {
         throw ApiException(AppStrings.cepNotFound);
@@ -32,7 +31,6 @@ class AddressService {
       final Map<String, dynamic> json =
           jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
 
-      // O ViaCEP responde 200 com {"erro": true} quando o CEP não existe.
       if (json['erro'] != null) throw ApiException(AppStrings.cepNotFound);
 
       return CepAddress.fromJson(json);

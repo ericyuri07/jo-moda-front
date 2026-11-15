@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../core/constants/app_strings.dart';
 import '../core/theme/app_colors.dart';
+import '../core/theme/app_radius.dart';
 import '../core/theme/app_sizes.dart';
 import '../core/theme/app_spacing.dart';
 import '../core/theme/app_text_styles.dart';
+import 'jo_logo.dart';
 
 /// Cabeçalho da loja (Home, Produto, Carrinho): faixa escura da marca com
-/// menu, nome da loja em dourado e carrinho; embaixo, a busca em pílula.
+/// menu, logo da loja e carrinho; embaixo, a busca em pílula.
 class ShopHeader extends StatelessWidget {
   const ShopHeader({
     required this.onMenuTap,
@@ -34,7 +36,6 @@ class ShopHeader extends StatelessWidget {
     );
 
     return Container(
-      // A faixa escura sobe até atrás da barra de status do celular.
       padding: EdgeInsets.fromLTRB(
         AppSpacing.sm,
         MediaQuery.paddingOf(context).top + AppSpacing.xs,
@@ -58,12 +59,7 @@ class ShopHeader extends StatelessWidget {
                 onPressed: onMenuTap,
               ),
               const Expanded(
-                child: Center(
-                  child: Text(
-                    AppStrings.logoName,
-                    style: AppTextStyles.brandName,
-                  ),
-                ),
+                child: Center(child: JoLogo(size: AppSizes.logoHeader)),
               ),
               IconButton(
                 tooltip: AppStrings.cartTooltip,

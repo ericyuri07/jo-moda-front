@@ -13,6 +13,7 @@ linter:
     # Boas práticas que valem a pena cobrar desde a primeira aula.
     always_declare_return_types: true
     avoid_print: true
+    directives_ordering: true
     prefer_const_constructors: true
     prefer_const_declarations: true
     prefer_final_locals: true

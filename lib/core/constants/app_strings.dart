@@ -1,10 +1,7 @@
 /// Todos os textos fixos da interface. Corrigir um texto = mudar aqui.
 abstract final class AppStrings {
   static const String appName = 'Jô Modas';
-  static const String logoMonogram = 'JM';
-  static const String logoName = 'JÔ MODAS';
 
-  // Geral
   static const String tryAgain = 'Tentar novamente';
   static const String loadError = 'Não foi possível carregar os dados.';
   static const String saveError = 'Não foi possível salvar. Tente novamente.';
@@ -21,14 +18,12 @@ abstract final class AppStrings {
   static const String searchHint = 'Tênis, Camisa, Shorts...';
   static const String routeNotFound = 'Rota não encontrada:';
 
-  // Login
   static const String loginTitle = 'Login';
   static const String emailHint = 'exemplo@gmail.com';
   static const String passwordHint = 'Digite sua senha';
   static const String signInButton = 'Entrar';
   static const String noAccountLink = 'Sem cadastro? Clique aqui';
 
-  // Cadastro
   static const String signUpTitle = 'Cadastre-se';
   static const String nameHint = 'Digite seu nome';
   static const String signUpButton = 'Cadastrar';
@@ -36,7 +31,6 @@ abstract final class AppStrings {
   static const String fieldName = 'O nome';
   static const String fieldPassword = 'A senha';
 
-  // Área do administrador (login e cadastro separados dos de cliente)
   static const String adminAccessButton = 'Entrar como ADM';
   static const String adminLoginTitle = 'Login ADM';
   static const String noAdminAccountLink = 'Não tem conta ADM? Crie aqui';
@@ -51,14 +45,12 @@ abstract final class AppStrings {
   static const String notAdminAccount =
       'Esta conta não é de administrador. Use o login de cliente.';
 
-  // Menu lateral
   static const String menuHome = 'Início';
   static const String menuCart = 'Carrinho';
   static const String menuAdminProducts = 'Gerenciar produtos';
   static const String menuAdminCategories = 'Gerenciar categorias';
   static const String menuSignOut = 'Sair';
 
-  // Entrada: subtítulos dos cards
   static const String signInSubtitle = 'Que bom ter você de volta.';
   static const String signUpSubtitle = 'Crie sua conta e aproveite a loja.';
   static const String adminSignInSubtitle =
@@ -66,7 +58,6 @@ abstract final class AppStrings {
   static const String adminSignUpSubtitle = 'Cadastre um novo administrador.';
   static const String adminAreaBadge = 'ÁREA ADMINISTRATIVA';
 
-  // Home
   static const String bannerTag = 'DESTAQUE';
   static const String bannerCta = 'Ver produto';
   static const String storeTitle = 'Nossa vitrine';
@@ -75,7 +66,6 @@ abstract final class AppStrings {
   static const String noProducts = 'Nenhum produto encontrado.';
   static const String storeLoadError = 'Não foi possível carregar a loja.';
 
-  // Detalhes do produto
   static const String colorLabel = 'Cor';
   static const String sizeLabel = 'Tamanho';
   static const String buyButton = 'Comprar';
@@ -84,7 +74,6 @@ abstract final class AppStrings {
   static const String noVariants = 'Este produto está sem estoque no momento.';
   static const String productNotFound = 'Produto não encontrado.';
 
-  // Carrinho
   static const String cartTitle = 'Meu carrinho';
   static const String cartEmpty = 'Seu carrinho está vazio.';
   static const String continueShopping = 'Continuar comprando';
@@ -118,7 +107,6 @@ abstract final class AppStrings {
   static const String fieldNumber = 'O número';
   static const String fieldNeighborhood = 'O bairro';
 
-  // Mensagem enviada ao WhatsApp
   static const String orderGreeting =
       'Olá! Gostaria de fazer um pedido na Jô Modas.';
   static const String orderCustomer = 'Cliente:';
@@ -129,9 +117,7 @@ abstract final class AppStrings {
   static const String orderComplement = 'Complemento:';
   static const String orderReference = 'Referência:';
 
-  // Administração de produtos (CRUD)
   static const String adminProductsTitle = 'Produtos';
-  // Administração de categorias (CRUD)
   static const String adminCategoriesTitle = 'Categorias';
   static const String allCategoriesTitle = 'Todas as categorias';
   static const String manageCategoriesTooltip = 'Gerenciar categorias';

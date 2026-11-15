@@ -9,10 +9,8 @@ import 'services/service_locator.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Sem isso, formatações em pt_BR (moeda, datas) podem lançar exceção.
   await initializeDateFormatting('pt_BR');
 
-  // Carrinho salvo no aparelho e login restaurado (se houver token válido).
   await cartService.load();
   await authService.restoreSession();
 

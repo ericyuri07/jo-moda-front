@@ -4,16 +4,12 @@ import 'app_colors.dart';
 
 /// Estilos de texto reutilizáveis. Tamanhos e pesos só existem aqui.
 ///
-/// Três fontes da marca (assets/fonts, declaradas no pubspec.yaml):
-/// - [brand] Cinzel: o nome "JÔ MODAS", no mesmo estilo clássico da logo;
+/// Duas fontes da marca (assets/fonts, declaradas no pubspec.yaml):
 /// - [serif] Cormorant Garamond: títulos, serifa fina com toque feminino;
 /// - [sans] Jost: textos, botões e campos.
 abstract final class AppTextStyles {
-  static const String brand = 'Cinzel';
   static const String serif = 'CormorantGaramond';
   static const String sans = 'Jost';
-
-  // ---- títulos ----
 
   /// Título dos cards de entrada ("Login", "Cadastre-se").
   static const TextStyle authTitle = TextStyle(
@@ -82,8 +78,6 @@ abstract final class AppTextStyles {
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
   );
-
-  // ---- corpo ----
 
   static const TextStyle body = TextStyle(
     fontFamily: sans,
@@ -173,8 +167,6 @@ abstract final class AppTextStyles {
     color: AppColors.errorOnDark,
   );
 
-  // ---- preços ----
-
   static const TextStyle price = TextStyle(
     fontFamily: sans,
     fontSize: 15,
@@ -231,8 +223,6 @@ abstract final class AppTextStyles {
     color: AppColors.textOnDarkMuted,
   );
 
-  // ---- botões, selos e marca ----
-
   static const TextStyle button = TextStyle(
     fontFamily: sans,
     fontSize: 15,
@@ -276,25 +266,5 @@ abstract final class AppTextStyles {
     fontSize: 32,
     fontWeight: FontWeight.w700,
     color: AppColors.goldDark,
-  );
-
-  /// "JÔ MODAS" no cabeçalho, no mesmo estilo das letras da logo.
-  static const TextStyle brandName = TextStyle(
-    fontFamily: brand,
-    fontSize: 20,
-    fontWeight: FontWeight.w600,
-    letterSpacing: 2.5,
-    color: AppColors.gold,
-  );
-
-  // Versão em texto da logo (só aparece se assets/images/logo.png faltar).
-  static const TextStyle logoMonogram = TextStyle(
-    fontFamily: serif,
-    fontWeight: FontWeight.w700,
-  );
-
-  static const TextStyle logoName = TextStyle(
-    fontFamily: brand,
-    letterSpacing: 1.5,
   );
 }

@@ -43,12 +43,8 @@ flutter:
     - assets/images/
 
   # Fontes da marca (Google Fonts, licença OFL):
-  # Cinzel = nome da loja; Cormorant Garamond = títulos; Jost = textos.
+  # Cormorant Garamond = títulos; Jost = textos.
   fonts:
-    - family: Cinzel
-      fonts:
-        - asset: assets/fonts/Cinzel-SemiBold.ttf
-          weight: 600
     - family: CormorantGaramond
       fonts:
         - asset: assets/fonts/CormorantGaramond-Medium.ttf

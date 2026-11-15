@@ -31,7 +31,6 @@ void main() {
     );
   }
 
-  // Em UTF-8, como o Laravel responde (o ApiClient decodifica assim).
   http.Response json(Object body, int status) =>
       http.Response.bytes(utf8.encode(jsonEncode(body)), status);
 

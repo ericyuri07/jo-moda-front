@@ -44,8 +44,6 @@ class ProductService {
     ).where((p) => p.active && p.id != product.id).take(_relatedLimit).toList();
   }
 
-  // ---- administração (CRUD) ----
-
   /// Todos os produtos, inclusive os inativos (o token de admin libera).
   Future<List<Product>> getAdminProducts() async {
     return _parseList(await _api.getAll('/products'));
@@ -76,7 +74,6 @@ class ProductService {
   }
 
   Future<void> _saveDetails(String productId, ProductInput input) async {
-    // Remove antes de criar: libera a combinação tamanho + cor, que é única.
     for (final String variantId in input.removedVariantIds) {
       await _variants.delete(variantId);
     }

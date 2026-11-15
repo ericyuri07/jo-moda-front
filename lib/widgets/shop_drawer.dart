@@ -8,17 +8,18 @@ import '../core/theme/app_sizes.dart';
 import '../core/theme/app_spacing.dart';
 import '../core/theme/app_text_styles.dart';
 import '../models/app_user.dart';
-import '../services/service_locator.dart';
 import 'jo_logo.dart';
 
 /// Menu lateral (hambúrguer) da área de compras: cabeçalho escuro com a logo
 /// e o usuário. O item de administração só aparece para perfil `admin`.
 class ShopDrawer extends StatelessWidget {
-  const ShopDrawer({super.key});
+  const ShopDrawer({required this.user, required this.onSignOut, super.key});
+
+  final AppUser? user;
+  final Future<void> Function() onSignOut;
 
   Future<void> _signOut(BuildContext context) async {
-    await authService.signOut();
-    await cartService.clear();
+    await onSignOut();
     if (context.mounted) context.goNamed(AppRoutes.signIn);
   }
 
@@ -29,7 +30,7 @@ class ShopDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppUser? user = authService.currentUser;
+    final AppUser? user = this.user;
 
     return Drawer(
       child: Column(

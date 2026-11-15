@@ -1,91 +1,79 @@
-# Jô Modas — app da loja de roupas
+# Jô Modas
 
-- **Aluno:** _(coloque seu nome aqui)_
-- **Back-end escolhido:** **A — API REST Laravel** (`jo-moda-loja`: Laravel + Sanctum + MySQL)
+- **Aluno:** Eric Yuri Antunes Cabral
+- **Back-end:** Opção A — API Laravel (Laravel + Sanctum + MySQL)
 
 ## Descrição
 
-App Flutter da loja Jô Modas. O cliente faz login, navega pelo catálogo (com
-categorias, busca, preço promocional e parcelamento), vê os detalhes do produto,
-monta o carrinho e fecha o pedido por WhatsApp (entrega com CEP via ViaCEP ou
-retirada na loja). O administrador gerencia os produtos — **CRUD completo** de
-`Product`, com os dados vindos da API.
+App da loja de roupas Jô Modas. O cliente faz login, navega pelo catálogo
+(categorias, busca e preço promocional), vê os detalhes do produto, monta o
+carrinho e envia o pedido por WhatsApp, com entrega (endereço pelo CEP) ou
+retirada na loja.
 
-Carrinho: guardado só no aparelho (`shared_preferences`); o pedido não é gravado no
-back-end, é enviado por mensagem de WhatsApp.
+O administrador tem CRUD completo de **produtos** (com estoque por tamanho e cor
+e fotos) e de **categorias**. Todos os dados vêm da API.
 
-## Telas e rotas (go_router, rotas nomeadas em `core/routes/`)
+## Telas e rotas
 
 | Tela | Rota | Nome |
 |---|---|---|
-| Login | `/login` | `signIn` |
-| Cadastro | `/cadastro` | `signUp` |
-| Login do administrador | `/login-adm` | `adminSignIn` |
-| Cadastro de administrador | `/cadastro-adm` | `adminSignUp` |
-| Início (banner, categorias, produtos) | `/inicio` | `home` |
+| Login | `/login` | `sign-in` |
+| Cadastro | `/cadastro` | `sign-up` |
+| Login do administrador | `/login-adm` | `admin-sign-in` |
+| Cadastro de administrador | `/cadastro-adm` | `admin-sign-up` |
+| Início | `/inicio` | `home` |
 | Detalhes do produto | `/produto/:id` | `product` |
-| Carrinho + entrega + WhatsApp | `/carrinho` | `cart` |
-| Gerenciar produtos (admin) | `/admin/produtos` | `adminProducts` |
-| Novo produto (admin) | `/admin/produtos/novo` | `adminProductNew` |
-| Editar produto (admin) | `/admin/produtos/:id/editar` | `adminProductEdit` |
-| Categorias (admin) | `/admin/categorias` | `adminCategories` |
+| Carrinho | `/carrinho` | `cart` |
+| Produtos (admin) | `/admin/produtos` | `admin-products` |
+| Novo produto (admin) | `/admin/produtos/novo` | `admin-product-new` |
+| Editar produto (admin) | `/admin/produtos/:id/editar` | `admin-product-edit` |
+| Categorias (admin) | `/admin/categorias` | `admin-categories` |
 
-Rotas `/admin*` só abrem para usuário com perfil admin (redirect no router).
-
-## Estrutura
-
-```
-lib/
-├── main.dart  app.dart
-├── core/ (constants, routes, theme, utils)
-├── models/    # fromJson/toJson, sem Flutter
-├── services/  # API Laravel, carrinho, ViaCEP, WhatsApp
-├── screens/   # auth, home, product, cart, admin
-└── widgets/   # componentes reutilizáveis
-```
+As rotas `/admin` só abrem para contas de administrador.
 
 ## Como rodar
 
-1. Suba o back-end (repositório separado, Docker; API em
-   `http://localhost:8021/api`) com o banco populado
-   (`php artisan migrate:fresh --seed`). Este projeto é **somente o front**.
+1. Suba a API Laravel (repositório separado) com o banco populado:
+   `php artisan migrate:fresh --seed`. A API fica em `http://localhost:8021/api`.
 2. Neste projeto:
 
 ```bash
-flutter create . --project-name jo_modas   # gera android/ios/web (uma vez)
 flutter pub get
-flutter run -d chrome
+flutter run
 ```
 
-Parâmetros opcionais (nada de URL/segredo fixo no código):
+No Chrome e no emulador Android o app encontra a API sozinho. Em celular físico,
+informe o IP do computador:
 
 ```bash
-# emulador Android acessa o PC por 10.0.2.2
-flutter run --dart-define=API_URL=http://10.0.2.2:8021/api \
-            --dart-define=STORE_WHATSAPP=55DDDNUMERO
+flutter run --dart-define=API_URL=http://IP-DO-PC:8021/api
 ```
 
-No Android, para HTTP (sem https) em desenvolvimento, adicione
-`android:usesCleartextTraffic="true"` no `<application>` do `AndroidManifest.xml`.
+Contas de teste:
 
-Logo: exporte do Figma para `assets/images/logo.png`.
+| Perfil | E-mail | Senha |
+|---|---|---|
+| Administrador | `admin@jomodas.com` | `admin123` |
+| Cliente | `cliente@jomodas.com` | `cliente123` |
 
-Contas de teste (seeder): `admin@jomodas.com` / `admin123` e
-`cliente@jomodas.com` / `cliente123`.
-
-Cliente e administrador entram por telas separadas: no login de cliente, toque
-em **Entrar como ADM** para abrir o login ADM. Lá, "Não tem conta ADM?" leva
-ao cadastro de administrador (nome, e-mail, senha e código de acesso). Cada
-login só aceita o seu tipo de conta.
-
-## Qualidade
-
-```bash
-dart format .
-flutter analyze
-flutter test
-```
+O administrador entra pelo botão **Entrar como ADM**, na tela de login.
 
 ## Prints das telas
 
-_(adicione aqui os prints: login, cadastro, início, detalhes, carrinho, admin)_
+### Entrada
+
+| Login | Cadastro | Login do administrador | Cadastro de administrador |
+|---|---|---|---|
+| ![Login](docs/prints/login-cliente.png) | ![Cadastro](docs/prints/cadastro-cliente.png) | ![Login do administrador](docs/prints/login-adm.png) | ![Cadastro de administrador](docs/prints/cadastro-adm.png) |
+
+### Loja
+
+| Início | Detalhes do produto | Carrinho |
+|---|---|---|
+| ![Início](docs/prints/home.png) | ![Detalhes do produto](docs/prints/inspecionar-produto.png) | ![Carrinho](docs/prints/carrinho-finalizar.png) |
+
+### Administração
+
+| Produtos | Cadastro de produto | Categorias | Cadastro de categoria |
+|---|---|---|---|
+| ![Produtos](docs/prints/produtos-adm.png) | ![Cadastro de produto](docs/prints/cadastro-produtos-adm.png) | ![Categorias](docs/prints/categorias-adm.png) | ![Cadastro de categoria](docs/prints/cadastro-categorias-adm.png) |

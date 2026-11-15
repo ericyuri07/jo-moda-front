@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:jo_modas/core/constants/app_strings.dart';
 import 'package:jo_modas/services/api_client.dart';
+import 'package:jo_modas/services/auth_exception.dart';
 import 'package:jo_modas/services/auth_service.dart';
 import 'package:jo_modas/services/token_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
+import 'app_radius.dart';
 import 'app_sizes.dart';
 import 'app_spacing.dart';
 import 'app_text_styles.dart';
@@ -26,7 +27,6 @@ abstract final class AppTheme {
 
     return ThemeData(
       useMaterial3: true,
-      // Jost em todo texto que não define fonte (campos, menus, diálogos).
       fontFamily: AppTextStyles.sans,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: AppColors.background,

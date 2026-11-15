@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_spacing.dart';
@@ -131,22 +132,21 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ShopScaffold(
-      // Já estamos no carrinho: tocar no ícone não faz nada.
-      onCartTap: () {},
-      body: ListenableBuilder(
-        listenable: cartService,
-        builder: (context, _) {
-          if (cartService.isEmpty) {
-            return EmptyState(
-              icon: Icons.shopping_bag_outlined,
-              message: AppStrings.cartEmpty,
-              actionLabel: AppStrings.continueShopping,
-              onAction: () => context.goNamed(AppRoutes.home),
-            );
-          }
-          return _buildContent();
-        },
+    return ListenableBuilder(
+      listenable: cartService,
+      builder: (context, _) => ShopScaffold(
+        cartCount: cartService.totalQuantity,
+        user: authService.currentUser,
+        onSignOut: signOutAndClearCart,
+        onCartTap: () {},
+        body: cartService.isEmpty
+            ? EmptyState(
+                icon: Icons.shopping_bag_outlined,
+                message: AppStrings.cartEmpty,
+                actionLabel: AppStrings.continueShopping,
+                onAction: () => context.goNamed(AppRoutes.home),
+              )
+            : _buildContent(),
       ),
     );
   }

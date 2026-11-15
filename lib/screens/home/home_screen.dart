@@ -58,9 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
-      // As duas chamadas começam juntas. O Future.wait espera as duas e
-      // repassa o primeiro erro; sem ele, se as categorias falhassem, o erro
-      // dos produtos ficaria sem tratamento.
       final Future<List<Category>> categoriesFuture = categoryService
           .getCategories();
       final Future<List<Product>> productsFuture = productService.getProducts();
@@ -127,10 +124,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ShopScaffold(
-      searchController: _searchController,
-      onSearchChanged: (_) => setState(() {}),
-      body: _buildBody(),
+    return ListenableBuilder(
+      listenable: cartService,
+      builder: (context, _) => ShopScaffold(
+        cartCount: cartService.totalQuantity,
+        user: authService.currentUser,
+        onSignOut: signOutAndClearCart,
+        searchController: _searchController,
+        onSearchChanged: (_) => setState(() {}),
+        body: _buildBody(),
+      ),
     );
   }
 

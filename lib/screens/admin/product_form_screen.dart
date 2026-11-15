@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_shadows.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_spacing.dart';
@@ -21,7 +22,6 @@ import '../../services/api_exception.dart';
 import '../../services/service_locator.dart';
 import '../../widgets/error_state.dart';
 import '../../widgets/labeled_field.dart';
-import 'photo_uploader.dart';
 import 'widgets/extra_image_tile.dart';
 import 'widgets/form_section_card.dart';
 import 'widgets/photo_picker_field.dart';
@@ -94,7 +94,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   final TextEditingController _initialStockController = TextEditingController(
     text: '0',
   );
-  final PhotoUploader _uploader = PhotoUploader();
 
   List<Category> _categories = const <Category>[];
   String? _categoryId;
@@ -159,8 +158,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         _categories = categories;
         if (product != null) _fill(product);
 
-        // Categoria que não está mais na lista (ex.: removida) faria o
-        // Dropdown lançar erro: nesse caso o admin escolhe de novo.
         if (!categories.any((c) => c.id == _categoryId)) _categoryId = null;
       });
     } on ApiException catch (e) {
@@ -216,8 +213,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     return text.isEmpty ? null : text;
   }
 
-  // ---- categorias ----
-
   /// Abre o cadastro de categorias e, ao voltar, recarrega a lista do campo
   /// sem perder o que já foi digitado no formulário.
   Future<void> _openCategories() async {
@@ -234,8 +229,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       _showMessage(e.message);
     }
   }
-
-  // ---- estoque ----
 
   /// Cria as combinações tamanho x cor que ainda não estão na lista.
   void _generateVariants() {
@@ -272,19 +265,16 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       final String? id = draft.id;
       if (id != null) _removedVariantIds.add(id);
     });
-    // O campo ainda está na tela neste frame: descarta o controller depois.
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => draft.stockController.dispose(),
     );
   }
 
-  // ---- fotos ----
-
   /// Abre a galeria (ou o seletor de arquivos no navegador), reduz a foto e
   /// envia para a API. Devolve a URL, ou `null` se cancelou ou deu erro.
   Future<String?> _pickAndUpload() async {
     try {
-      return await _uploader.pickAndUpload();
+      return await photoUploader.pickAndUpload();
     } on ApiException catch (e) {
       _showMessage(e.message);
       return null;
@@ -318,8 +308,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       if (id != null) _removedImageIds.add(id);
     });
   }
-
-  // ---- salvar ----
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
@@ -360,8 +348,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     }
   }
 
-  // ---- interface ----
-
   @override
   Widget build(BuildContext context) {
     final bool showSave = !_isLoading && _errorMessage == null;
@@ -373,7 +359,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         ),
       ),
       body: _buildBody(),
-      // Salvar fica sempre à mão, fixo embaixo.
       bottomNavigationBar: showSave ? _buildSaveBar() : null,
     );
   }
@@ -401,7 +386,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.gold,
               ),
-              // Espera a foto terminar de subir antes de salvar.
               onPressed: _isSaving || _isUploading ? null : _save,
               icon: _isSaving
                   ? const SizedBox(
@@ -529,8 +513,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
           ],
         ),
         DropdownButtonFormField<String>(
-          // A chave muda com a lista: ao voltar das categorias, o campo é
-          // recriado com as opções novas.
           key: ValueKey<int>(_categories.length),
           initialValue: _categoryId,
           borderRadius: BorderRadius.circular(AppRadius.md),

@@ -4,17 +4,8 @@ import '../core/constants/app_strings.dart';
 import '../models/app_user.dart';
 import 'api_client.dart';
 import 'api_exception.dart';
+import 'auth_exception.dart';
 import 'token_storage.dart';
-
-/// Erro de autenticação já com mensagem pronta para o usuário.
-class AuthException implements Exception {
-  AuthException(this.message);
-
-  final String message;
-
-  @override
-  String toString() => message;
-}
 
 /// Autenticação contra o Laravel + Sanctum.
 ///
@@ -102,7 +93,6 @@ class AuthService extends ChangeNotifier {
     } on ApiException catch (e) {
       throw AuthException(e.message);
     } on TypeError {
-      // JSON em formato diferente do esperado (campo faltando ou de outro tipo).
       throw AuthException(AppStrings.unexpectedResponse);
     }
 
@@ -126,19 +116,25 @@ class AuthService extends ChangeNotifier {
   /// router (ninguém chegou a ficar logado).
   Future<void> _revokeCurrentToken() async {
     try {
-      await _api.post('/auth/logout');
-    } on ApiException {
-      // Sem rede: o token só fica esquecido no servidor.
+      await _logoutOnServer();
     } finally {
       await _tokens.clear();
     }
   }
 
-  Future<void> signOut() async {
+  /// Revoga o token no back-end. Sem rede ou com token já inválido, o erro é
+  /// ignorado: a saída local acontece de qualquer jeito.
+  Future<void> _logoutOnServer() async {
     try {
       await _api.post('/auth/logout');
     } on ApiException {
-      // Sem rede ou token já inválido: o logout local acontece de qualquer jeito.
+      return;
+    }
+  }
+
+  Future<void> signOut() async {
+    try {
+      await _logoutOnServer();
     } finally {
       await _tokens.clear();
       _setUser(null);
@@ -154,7 +150,6 @@ class AuthService extends ChangeNotifier {
     try {
       final Map<String, dynamic> data =
           (await _api.get('/auth/me')) as Map<String, dynamic>;
-      // Aceita o usuário puro ou embrulhado em `{"user": {...}}`.
       final Object? inner = data['user'];
       final AppUser user = AppUser.fromJson(
         inner is Map<String, dynamic> ? inner : data,
@@ -162,8 +157,6 @@ class AuthService extends ChangeNotifier {
       _setUser(user);
       return user;
     } on ApiException {
-      // Um 401 já limpou o token (via _expireSession). Sem rede, o token fica
-      // guardado para tentar de novo na próxima abertura.
       return null;
     } on TypeError {
       return null;

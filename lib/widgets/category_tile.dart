@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/theme/app_colors.dart';
+import '../core/theme/app_durations.dart';
 import '../core/theme/app_shadows.dart';
 import '../core/theme/app_sizes.dart';
 import '../core/theme/app_spacing.dart';

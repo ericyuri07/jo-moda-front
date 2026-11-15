@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
@@ -49,7 +50,6 @@ class _AdminCategoriesScreenState extends State<AdminCategoriesScreen> {
     });
 
     try {
-      // As duas chamadas começam juntas; o Future.wait repassa o primeiro erro.
       final Future<List<Category>> categoriesFuture = categoryService
           .getCategories();
       final Future<List<Product>> productsFuture = productService
@@ -97,7 +97,7 @@ class _AdminCategoriesScreenState extends State<AdminCategoriesScreen> {
     if (category != null &&
         input.name == category.name &&
         input.imageUrl == category.imageUrl) {
-      return; // nada mudou
+      return;
     }
 
     try {
@@ -114,7 +114,6 @@ class _AdminCategoriesScreenState extends State<AdminCategoriesScreen> {
   }
 
   Future<void> _confirmDelete(Category category) async {
-    // Com produtos, o back-end recusa: avisa antes, sem abrir a confirmação.
     if ((_productCount[category.id] ?? 0) > 0) {
       _showMessage(AppStrings.categoryInUse);
       return;
@@ -153,7 +152,6 @@ class _AdminCategoriesScreenState extends State<AdminCategoriesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Aberta pelo menu lateral não há tela anterior: volta para a loja.
         leading: context.canPop()
             ? null
             : IconButton(
@@ -193,7 +191,6 @@ class _AdminCategoriesScreenState extends State<AdminCategoriesScreen> {
     return RefreshIndicator(
       onRefresh: _load,
       child: ListView(
-        // Espaço no fim para o botão "Nova categoria" não cobrir o último item.
         padding: const EdgeInsets.fromLTRB(
           AppSpacing.screenPadding,
           AppSpacing.xl,
@@ -232,7 +229,6 @@ class _AdminCategoriesScreenState extends State<AdminCategoriesScreen> {
               height: AppSizes.adminThumb,
               alignment: Alignment.center,
               color: AppColors.authBackground,
-              // Com foto, mostra a foto; sem foto, a inicial dourada.
               child: (category.imageUrl ?? '').isEmpty
                   ? Text(
                       initial,

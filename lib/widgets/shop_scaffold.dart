@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/routes/app_routes.dart';
-import '../services/service_locator.dart';
+import '../models/app_user.dart';
 import 'shop_drawer.dart';
 import 'shop_header.dart';
 
@@ -14,6 +14,9 @@ import 'shop_header.dart';
 class ShopScaffold extends StatefulWidget {
   const ShopScaffold({
     required this.body,
+    required this.cartCount,
+    required this.user,
+    required this.onSignOut,
     this.searchController,
     this.onSearchChanged,
     this.onCartTap,
@@ -21,6 +24,9 @@ class ShopScaffold extends StatefulWidget {
   });
 
   final Widget body;
+  final int cartCount;
+  final AppUser? user;
+  final Future<void> Function() onSignOut;
   final TextEditingController? searchController;
   final ValueChanged<String>? onSearchChanged;
   final VoidCallback? onCartTap;
@@ -67,24 +73,20 @@ class _ShopScaffoldState extends State<ShopScaffold> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      drawer: const ShopDrawer(),
-      // O cabeçalho escuro cuida da área da barra de status.
+      drawer: ShopDrawer(user: widget.user, onSignOut: widget.onSignOut),
       body: SafeArea(
         top: false,
         child: Column(
           children: <Widget>[
-            ListenableBuilder(
-              listenable: cartService,
-              builder: (context, _) => ShopHeader(
-                onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
-                onCartTap: _openCart,
-                searchController: _controller,
-                cartCount: cartService.totalQuantity,
-                onSearchChanged: widget.onSearchChanged,
-                onSearchSubmitted: widget.onSearchChanged == null
-                    ? _submitSearch
-                    : null,
-              ),
+            ShopHeader(
+              onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
+              onCartTap: _openCart,
+              searchController: _controller,
+              cartCount: widget.cartCount,
+              onSearchChanged: widget.onSearchChanged,
+              onSearchSubmitted: widget.onSearchChanged == null
+                  ? _submitSearch
+                  : null,
             ),
             Expanded(child: widget.body),
           ],

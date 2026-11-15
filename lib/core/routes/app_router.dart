@@ -52,7 +52,6 @@ abstract final class AppRouter {
 
         if (!isSignedIn()) return isAuthPage ? null : AppRoutes.signInPath;
 
-        // Já logado não volta para Login/Cadastro: admin vai para o painel.
         if (isAuthPage) {
           return isAdmin() ? AppRoutes.adminProductsPath : AppRoutes.homePath;
         }

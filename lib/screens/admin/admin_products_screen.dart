@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
@@ -157,7 +158,6 @@ class _AdminProductsScreenState extends State<AdminProductsScreen> {
     return RefreshIndicator(
       onRefresh: _load,
       child: ListView(
-        // Espaço no fim para o botão "Novo produto" não cobrir o último item.
         padding: const EdgeInsets.fromLTRB(
           AppSpacing.screenPadding,
           AppSpacing.xl,

@@ -7,7 +7,7 @@ import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/utils/validators.dart';
-import '../../services/auth_service.dart';
+import '../../services/auth_exception.dart';
 import '../../services/service_locator.dart';
 import '../../widgets/app_text_field.dart';
 import '../../widgets/auth_layout.dart';
@@ -48,7 +48,6 @@ class _AdminSignInScreenState extends State<AdminSignInScreen> {
         password: _passwordController.text,
       );
 
-      // O router também redireciona sozinho ao perceber o login.
       if (mounted) context.goNamed(AppRoutes.adminProducts);
     } on AuthException catch (e) {
       _showMessage(e.message);

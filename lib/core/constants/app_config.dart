@@ -27,6 +27,13 @@ abstract final class AppConfig {
 
   static const int maxQuantity = 99;
 
+  /// Tempo máximo de espera por uma resposta da API ou do ViaCEP.
+  static const Duration requestTimeout = Duration(seconds: 15);
+
+  /// Foto reduzida antes do upload (o back-end aceita até 2 MB).
+  static const double uploadMaxDimension = 1600;
+  static const int uploadQuality = 85;
+
   /// URL base da API Laravel (já com `/api`).
   ///
   /// O docker-compose do back-end publica a API na porta 8021 do computador.

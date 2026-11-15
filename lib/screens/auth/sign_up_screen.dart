@@ -7,7 +7,7 @@ import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/utils/validators.dart';
-import '../../services/auth_service.dart';
+import '../../services/auth_exception.dart';
 import '../../services/service_locator.dart';
 import '../../widgets/app_text_field.dart';
 import '../../widgets/auth_layout.dart';

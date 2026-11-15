@@ -16,8 +16,6 @@ class JoModasApp extends StatefulWidget {
 }
 
 class _JoModasAppState extends State<JoModasApp> {
-  // O router é criado uma única vez: se fosse recriado a cada build, a
-  // navegação voltaria para a tela inicial.
   late final GoRouter _router = AppRouter.create(
     initialLocation: authService.isSignedIn
         ? AppRoutes.homePath
