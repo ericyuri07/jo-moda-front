@@ -4,14 +4,14 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_sizes.dart';
 
-/// Botão redondo de ação das listas do admin: editar (dourado) ou excluir
+/// Botão redondo de ação das listas do admin: editar (neutro) ou excluir
 /// (vermelho).
 class AdminActionButton extends StatelessWidget {
   const AdminActionButton.edit({required this.onPressed, super.key})
     : tooltip = AppStrings.editTooltip,
       icon = Icons.edit_outlined,
-      color = AppColors.goldDark,
-      background = AppColors.goldSoft;
+      color = AppColors.textPrimary,
+      background = AppColors.surfaceMuted;
 
   const AdminActionButton.delete({required this.onPressed, super.key})
     : tooltip = AppStrings.deleteTooltip,

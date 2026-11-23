@@ -1,6 +1,10 @@
 /// Nomes e caminhos das rotas. Navegue sempre por nome:
 /// `context.goNamed(AppRoutes.home)`.
 abstract final class AppRoutes {
+  /// Abertura animada com a logo; sempre a primeira tela do app.
+  static const String splash = 'splash';
+  static const String splashPath = '/';
+
   static const String signIn = 'sign-in';
   static const String signInPath = '/login';
 
@@ -36,4 +40,22 @@ abstract final class AppRoutes {
 
   static const String adminProductEdit = 'admin-product-edit';
   static const String adminProductEditPath = '/admin/produtos/:id/editar';
+
+  /// Parâmetro do login/cadastro com a tela da loja para onde voltar depois.
+  static const String returnParam = 'voltar';
+
+  /// Destino de volta pedido em [uri]; só aceita telas abertas da loja.
+  static String? returnPathFrom(Uri uri) {
+    final String? path = uri.queryParameters[returnParam];
+    if (path == null) return null;
+
+    final bool isShopPage =
+        path == homePath || path == cartPath || path.startsWith('/produto/');
+    return isShopPage ? path : null;
+  }
+
+  /// Parâmetros que fazem o login/cadastro voltar para [path].
+  static Map<String, String> returnTo(String? path) => <String, String>{
+    returnParam: ?path,
+  };
 }

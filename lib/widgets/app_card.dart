@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_radius.dart';
-import '../core/theme/app_shadows.dart';
+import '../core/theme/app_sizes.dart';
 import '../core/theme/app_spacing.dart';
 
-/// Card branco padrão da loja: cantos arredondados e sombra suave.
+/// Card padrão da loja: fundo branco, borda fina e cantos arredondados,
+/// sem sombra.
 class AppCard extends StatelessWidget {
   const AppCard({
     required this.child,
@@ -26,7 +27,10 @@ class AppCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: AppShadows.card,
+        border: Border.all(
+          color: AppColors.border,
+          width: AppSizes.borderWidth,
+        ),
       ),
       child: child,
     );

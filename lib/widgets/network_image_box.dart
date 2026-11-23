@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../core/theme/app_colors.dart';
+import '../core/theme/app_curves.dart';
+import '../core/theme/app_durations.dart';
 import '../core/theme/app_sizes.dart';
 
-/// Imagem da internet com placeholder de carregamento e de erro, para a tela
-/// nunca quebrar quando uma foto falha.
+/// Imagem da internet que aparece com fade depois de baixada, com
+/// placeholder enquanto carrega e quando falha (a tela nunca quebra).
 class NetworkImageBox extends StatelessWidget {
   const NetworkImageBox({
     required this.url,
@@ -25,8 +27,22 @@ class NetworkImageBox extends StatelessWidget {
       fit: fit,
       width: double.infinity,
       height: double.infinity,
-      loadingBuilder: (context, child, progress) =>
-          progress == null ? child : const _Placeholder(),
+      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+        if (wasSynchronouslyLoaded) return child;
+
+        return Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            const ColoredBox(color: AppColors.placeholder),
+            AnimatedOpacity(
+              opacity: frame == null ? 0 : 1,
+              duration: AppDurations.imageFade,
+              curve: AppCurves.standard,
+              child: child,
+            ),
+          ],
+        );
+      },
       errorBuilder: (context, error, stackTrace) => const _Placeholder(),
     );
   }
@@ -43,7 +59,7 @@ class _Placeholder extends StatelessWidget {
         child: Icon(
           Icons.image_outlined,
           color: AppColors.hint,
-          size: AppSizes.iconXl,
+          size: AppSizes.iconMd,
         ),
       ),
     );

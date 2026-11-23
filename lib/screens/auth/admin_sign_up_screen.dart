@@ -11,7 +11,7 @@ import '../../services/auth_exception.dart';
 import '../../services/service_locator.dart';
 import '../../widgets/app_text_field.dart';
 import '../../widgets/auth_layout.dart';
-import '../../widgets/gold_button.dart';
+import '../../widgets/primary_button.dart';
 
 /// Cadastro de administrador, aberto pelo botão "Entrar como ADM" do login.
 ///
@@ -146,7 +146,7 @@ class _AdminSignUpScreenState extends State<AdminSignUpScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              GoldButton(
+              PrimaryButton(
                 label: AppStrings.adminSignUpButton,
                 isLoading: _isLoading,
                 onPressed: _handleSignUp,

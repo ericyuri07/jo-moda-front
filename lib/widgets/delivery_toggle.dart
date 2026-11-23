@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../core/constants/app_strings.dart';
 import '../core/theme/app_colors.dart';
+import '../core/theme/app_curves.dart';
 import '../core/theme/app_durations.dart';
 import '../core/theme/app_radius.dart';
 import '../core/theme/app_sizes.dart';
 import '../core/theme/app_spacing.dart';
 import '../core/theme/app_text_styles.dart';
 
-/// Escolha entre "Entrega" e "Retirada" do carrinho, em pílula segmentada.
+/// Escolha entre "Entrega" e "Retirada" do carrinho: controle segmentado
+/// com um indicador preto que desliza até a opção escolhida.
 class DeliveryToggle extends StatelessWidget {
   const DeliveryToggle({
     required this.isDelivery,
@@ -25,26 +27,44 @@ class DeliveryToggle extends StatelessWidget {
       height: AppSizes.toggleHeight,
       padding: const EdgeInsets.all(AppSpacing.xs),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.pill),
-        border: Border.all(
-          color: AppColors.border,
-          width: AppSizes.borderWidth,
-        ),
+        color: AppColors.surfaceMuted,
+        borderRadius: BorderRadius.circular(AppRadius.md),
       ),
-      child: Row(
+      child: Stack(
+        fit: StackFit.expand,
         children: <Widget>[
-          _Option(
-            label: AppStrings.delivery,
-            icon: Icons.local_shipping_outlined,
-            selected: isDelivery,
-            onTap: () => onChanged(true),
+          AnimatedAlign(
+            alignment: isDelivery
+                ? Alignment.centerLeft
+                : Alignment.centerRight,
+            duration: AppDurations.switcher,
+            curve: AppCurves.emphasized,
+            child: FractionallySizedBox(
+              widthFactor: 0.5,
+              heightFactor: 1,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                ),
+              ),
+            ),
           ),
-          _Option(
-            label: AppStrings.pickup,
-            icon: Icons.storefront_outlined,
-            selected: !isDelivery,
-            onTap: () => onChanged(false),
+          Row(
+            children: <Widget>[
+              _Option(
+                label: AppStrings.delivery,
+                icon: Icons.local_shipping_outlined,
+                selected: isDelivery,
+                onTap: () => onChanged(true),
+              ),
+              _Option(
+                label: AppStrings.pickup,
+                icon: Icons.storefront_outlined,
+                selected: !isDelivery,
+                onTap: () => onChanged(false),
+              ),
+            ],
           ),
         ],
       ),
@@ -67,32 +87,32 @@ class _Option extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color color = selected ? AppColors.gold : AppColors.textSecondary;
+    final Color color = selected
+        ? AppColors.textOnDark
+        : AppColors.textSecondary;
 
     return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: AppDurations.selection,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? AppColors.primary : AppColors.transparent,
-            borderRadius: BorderRadius.circular(AppRadius.pill),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Icon(icon, size: AppSizes.iconSm, color: color),
-              const SizedBox(width: AppSpacing.sm),
-              Text(
-                label,
-                style: AppTextStyles.bodyStrong.copyWith(
-                  color: selected
-                      ? AppColors.textOnDark
-                      : AppColors.textSecondary,
+      child: Semantics(
+        button: true,
+        selected: selected,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: onTap,
+          child: TweenAnimationBuilder<Color?>(
+            tween: ColorTween(end: color),
+            duration: AppDurations.switcher,
+            curve: AppCurves.standard,
+            builder: (context, value, _) => Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(icon, size: AppSizes.iconSm, color: value),
+                const SizedBox(width: AppSpacing.sm),
+                Text(
+                  label,
+                  style: AppTextStyles.bodyStrong.copyWith(color: value),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

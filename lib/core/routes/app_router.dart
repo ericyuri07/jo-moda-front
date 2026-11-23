@@ -12,6 +12,7 @@ import '../../screens/auth/sign_up_screen.dart';
 import '../../screens/cart/cart_screen.dart';
 import '../../screens/home/home_screen.dart';
 import '../../screens/product/product_detail_screen.dart';
+import '../../screens/splash/splash_screen.dart';
 import '../constants/app_strings.dart';
 import '../theme/app_spacing.dart';
 import 'app_routes.dart';
@@ -19,13 +20,16 @@ import 'app_routes.dart';
 /// Configuração de navegação, seguindo o fluxograma do protótipo:
 ///
 /// ```
-/// /login ⇄ /cadastro
-///    └──────► /inicio (Home) ─► /produto/:id ─► /carrinho ─► WhatsApp
-///                 └──────────► /admin/produtos (só admin)
+/// / (abertura) ─► /inicio (Home) ─► /produto/:id ─► /carrinho ─► WhatsApp
+///                    │                                  └► /login ⇄ /cadastro
+///                    └──────► /admin/produtos (só admin)
 ///                                  ├ /admin/produtos/novo
 ///                                  ├ /admin/produtos/:id/editar
 ///                                  └ /admin/categorias
 /// ```
+///
+/// A loja é aberta a visitantes: o login só é pedido ao finalizar o pedido
+/// (e volta para o carrinho) e na área de administração.
 ///
 /// O estado de login chega por funções (`isSignedIn`, `isAdmin`) e por um
 /// [Listenable] genérico, para que o `core/` não precise importar nada de
@@ -44,16 +48,23 @@ abstract final class AppRouter {
       debugLogDiagnostics: kDebugMode,
       redirect: (context, state) {
         final String location = state.matchedLocation;
+        if (location == AppRoutes.splashPath) return null;
+
         final bool isAuthPage =
             location == AppRoutes.signInPath ||
             location == AppRoutes.signUpPath ||
             location == AppRoutes.adminSignInPath ||
             location == AppRoutes.adminSignUpPath;
 
-        if (!isSignedIn()) return isAuthPage ? null : AppRoutes.signInPath;
+        if (!isSignedIn()) {
+          return location.startsWith(AppRoutes.adminPrefix)
+              ? AppRoutes.adminSignInPath
+              : null;
+        }
 
         if (isAuthPage) {
-          return isAdmin() ? AppRoutes.adminProductsPath : AppRoutes.homePath;
+          if (isAdmin()) return AppRoutes.adminProductsPath;
+          return AppRoutes.returnPathFrom(state.uri) ?? AppRoutes.homePath;
         }
 
         if (location.startsWith(AppRoutes.adminPrefix) && !isAdmin()) {
@@ -63,14 +74,21 @@ abstract final class AppRouter {
       },
       routes: <RouteBase>[
         GoRoute(
+          path: AppRoutes.splashPath,
+          name: AppRoutes.splash,
+          builder: (context, state) => const SplashScreen(),
+        ),
+        GoRoute(
           path: AppRoutes.signInPath,
           name: AppRoutes.signIn,
-          builder: (context, state) => const SignInScreen(),
+          builder: (context, state) =>
+              SignInScreen(returnPath: AppRoutes.returnPathFrom(state.uri)),
         ),
         GoRoute(
           path: AppRoutes.signUpPath,
           name: AppRoutes.signUp,
-          builder: (context, state) => const SignUpScreen(),
+          builder: (context, state) =>
+              SignUpScreen(returnPath: AppRoutes.returnPathFrom(state.uri)),
         ),
         GoRoute(
           path: AppRoutes.adminSignInPath,

@@ -11,11 +11,14 @@ import '../../services/auth_exception.dart';
 import '../../services/service_locator.dart';
 import '../../widgets/app_text_field.dart';
 import '../../widgets/auth_layout.dart';
-import '../../widgets/gold_button.dart';
+import '../../widgets/primary_button.dart';
 
 /// Tela de cadastro (fluxograma: 2). Nome, e-mail e senha, como no Figma.
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+  const SignUpScreen({this.returnPath, super.key});
+
+  /// Tela da loja para onde voltar (ex.: o carrinho). Sem ela, vai à Home.
+  final String? returnPath;
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -50,13 +53,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
         password: _passwordController.text,
       );
 
-      if (mounted) context.goNamed(AppRoutes.home);
+      if (mounted) _backToShop();
     } on AuthException catch (e) {
       _showMessage(e.message);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
+
+  void _backToShop() => context.go(widget.returnPath ?? AppRoutes.homePath);
 
   void _showMessage(String message) {
     if (!mounted) return;
@@ -70,7 +75,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return AuthLayout(
       title: AppStrings.signUpTitle,
-      subtitle: AppStrings.signUpSubtitle,
+      subtitle: widget.returnPath == AppRoutes.cartPath
+          ? AppStrings.signUpToOrder
+          : AppStrings.signUpSubtitle,
+      onBack: _backToShop,
       children: <Widget>[
         Form(
           key: _formKey,
@@ -117,7 +125,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: AppSpacing.sm),
               GestureDetector(
-                onTap: () => context.goNamed(AppRoutes.signIn),
+                onTap: () => context.goNamed(
+                  AppRoutes.signIn,
+                  queryParameters: AppRoutes.returnTo(widget.returnPath),
+                ),
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
                   child: Text(
@@ -127,7 +138,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              GoldButton(
+              PrimaryButton(
                 label: AppStrings.signUpButton,
                 isLoading: _isLoading,
                 onPressed: _handleSignUp,

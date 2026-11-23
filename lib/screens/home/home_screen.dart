@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_strings.dart';
 import '../../core/routes/app_routes.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../models/category.dart';
@@ -12,10 +13,13 @@ import '../../services/service_locator.dart';
 import '../../widgets/category_tile.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/error_state.dart';
+import '../../widgets/fade_slide_in.dart';
 import '../../widgets/home_banner.dart';
 import '../../widgets/product_card.dart';
+import '../../widgets/product_card_skeleton.dart';
 import '../../widgets/section_header.dart';
 import '../../widgets/shop_scaffold.dart';
+import '../../widgets/skeleton.dart';
 
 /// Home (fluxograma: 3): banner, categorias e vitrine de produtos.
 /// Tudo vem da API; a busca e o filtro de categoria agem sobre a lista.
@@ -125,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: cartService,
+      listenable: Listenable.merge(<Listenable>[cartService, authService]),
       builder: (context, _) => ShopScaffold(
         cartCount: cartService.totalQuantity,
         user: authService.currentUser,
@@ -138,9 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildBody() {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    if (_isLoading) return _buildSkeleton();
 
     final String? error = _errorMessage;
     if (error != null) {
@@ -155,31 +157,39 @@ class _HomeScreenState extends State<HomeScreen> {
         slivers: <Widget>[
           const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.lg)),
           SliverToBoxAdapter(
-            child: HomeBanner(products: _bannerProducts, onTap: _openProduct),
+            child: FadeSlideIn(
+              child: HomeBanner(products: _bannerProducts, onTap: _openProduct),
+            ),
           ),
           const SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                AppSpacing.screenPadding,
-                AppSpacing.xl,
-                AppSpacing.screenPadding,
-                AppSpacing.lg,
+            child: FadeSlideIn(
+              index: 1,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  AppSpacing.screenPadding,
+                  AppSpacing.xl,
+                  AppSpacing.screenPadding,
+                  AppSpacing.lg,
+                ),
+                child: SectionHeader(AppStrings.featuredTitle),
               ),
-              child: SectionHeader(AppStrings.featuredTitle),
             ),
           ),
           SliverToBoxAdapter(child: _buildCategories()),
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.screenPadding,
-                AppSpacing.lg,
-                AppSpacing.screenPadding,
-                AppSpacing.lg,
-              ),
-              child: SectionHeader(
-                AppStrings.storeTitle,
-                trailing: AppStrings.productCount(products.length),
+            child: FadeSlideIn(
+              index: 2,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.screenPadding,
+                  AppSpacing.xl,
+                  AppSpacing.screenPadding,
+                  AppSpacing.lg,
+                ),
+                child: SectionHeader(
+                  AppStrings.storeTitle,
+                  trailing: AppStrings.productCount(products.length),
+                ),
               ),
             ),
           ),
@@ -194,23 +204,66 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               sliver: SliverGrid(
                 delegate: SliverChildBuilderDelegate(
-                  (context, i) => ProductCard(
-                    product: products[i],
-                    onTap: () => _openProduct(products[i]),
+                  (context, i) => FadeSlideIn(
+                    key: ValueKey<String>(products[i].id),
+                    index: i,
+                    child: ProductCard(
+                      product: products[i],
+                      onTap: () => _openProduct(products[i]),
+                    ),
                   ),
                   childCount: products.length,
                 ),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: AppSpacing.lg,
-                  crossAxisSpacing: AppSpacing.lg,
-                  childAspectRatio: AppSizes.productCardAspectRatio,
-                ),
+                gridDelegate: _gridDelegate,
               ),
             ),
           const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.xxl)),
         ],
       ),
+    );
+  }
+
+  static const SliverGridDelegate _gridDelegate =
+      SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: AppSpacing.sm,
+        crossAxisSpacing: AppSpacing.md,
+        childAspectRatio: AppSizes.productCardAspectRatio,
+      );
+
+  /// Vitrine "fantasma" pulsando enquanto a API responde.
+  Widget _buildSkeleton() {
+    return CustomScrollView(
+      key: const ValueKey<String>('skeleton'),
+      physics: const NeverScrollableScrollPhysics(),
+      slivers: <Widget>[
+        const SliverPadding(
+          padding: EdgeInsets.fromLTRB(
+            AppSpacing.screenPadding,
+            AppSpacing.lg,
+            AppSpacing.screenPadding,
+            AppSpacing.xl,
+          ),
+          sliver: SliverToBoxAdapter(
+            child: Skeleton(
+              height: AppSizes.bannerHeight,
+              radius: AppRadius.xl,
+            ),
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.screenPadding,
+          ),
+          sliver: SliverGrid(
+            delegate: SliverChildBuilderDelegate(
+              (context, i) => const ProductCardSkeleton(),
+              childCount: 4,
+            ),
+            gridDelegate: _gridDelegate,
+          ),
+        ),
+      ],
     );
   }
 
@@ -229,12 +282,15 @@ class _HomeScreenState extends State<HomeScreen> {
           final Category category = _categories[i];
           final bool selected = category.id == _selectedCategoryId;
 
-          return CategoryTile(
-            name: category.name,
-            imageUrl: _categoryImage(category),
-            selected: selected,
-            onTap: () => setState(
-              () => _selectedCategoryId = selected ? null : category.id,
+          return FadeSlideIn(
+            index: i + 1,
+            child: CategoryTile(
+              name: category.name,
+              imageUrl: _categoryImage(category),
+              selected: selected,
+              onTap: () => setState(
+                () => _selectedCategoryId = selected ? null : category.id,
+              ),
             ),
           );
         },

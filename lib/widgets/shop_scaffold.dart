@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/routes/app_routes.dart';
+import '../core/theme/app_curves.dart';
+import '../core/theme/app_durations.dart';
 import '../models/app_user.dart';
 import 'shop_drawer.dart';
 import 'shop_header.dart';
 
 /// Estrutura das telas da loja (Home, Produto, Carrinho): menu lateral,
-/// cabeçalho com busca e carrinho, e o conteúdo abaixo.
+/// cabeçalho com busca e carrinho, e o conteúdo abaixo. Quando o conteúdo
+/// muda de tipo (carregando → lista, lista → vazio), a troca é em fade.
 ///
 /// Na Home, a busca filtra a vitrine na hora (`onSearchChanged`). Nas outras
 /// telas, ao enviar a busca o usuário volta à Home já filtrada.
@@ -88,7 +91,18 @@ class _ShopScaffoldState extends State<ShopScaffold> {
                   ? _submitSearch
                   : null,
             ),
-            Expanded(child: widget.body),
+            Expanded(
+              child: AnimatedSwitcher(
+                duration: AppDurations.switcher,
+                switchInCurve: AppCurves.standard,
+                switchOutCurve: AppCurves.standard,
+                layoutBuilder: (current, previous) => Stack(
+                  fit: StackFit.expand,
+                  children: <Widget>[...previous, ?current],
+                ),
+                child: widget.body,
+              ),
+            ),
           ],
         ),
       ),

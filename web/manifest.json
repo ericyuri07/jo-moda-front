@@ -1,11 +1,11 @@
 {
-    "name": "jo_modas",
-    "short_name": "jo_modas",
+    "name": "Jô Modas",
+    "short_name": "Jô Modas",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#F7F6F3",
+    "theme_color": "#F7F6F3",
+    "description": "Jô Modas: loja de moda online. Escolha suas peças e faça o pedido pelo WhatsApp.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

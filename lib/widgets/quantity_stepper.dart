@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
 import '../core/theme/app_colors.dart';
+import '../core/theme/app_curves.dart';
+import '../core/theme/app_durations.dart';
 import '../core/theme/app_radius.dart';
 import '../core/theme/app_sizes.dart';
 import '../core/theme/app_spacing.dart';
 import '../core/theme/app_text_styles.dart';
 
-/// Seletor de quantidade em pílula: "−  1  +".
-class QuantityStepper extends StatelessWidget {
+/// Seletor de quantidade: "−  1  +". O número troca com um deslize vertical
+/// (sobe ao aumentar, desce ao diminuir).
+class QuantityStepper extends StatefulWidget {
   const QuantityStepper({
     required this.quantity,
     required this.maxQuantity,
@@ -22,13 +25,35 @@ class QuantityStepper extends StatelessWidget {
   final bool compact;
 
   @override
+  State<QuantityStepper> createState() => _QuantityStepperState();
+}
+
+class _QuantityStepperState extends State<QuantityStepper> {
+  bool _increasing = true;
+
+  @override
+  void didUpdateWidget(QuantityStepper oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.quantity != widget.quantity) {
+      _increasing = widget.quantity > oldWidget.quantity;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final int quantity = widget.quantity;
+    final double direction = _increasing ? 1 : -1;
+
     return Container(
-      width: compact ? AppSizes.stepperWidthCompact : AppSizes.stepperWidth,
-      height: compact ? AppSizes.stepperHeightCompact : AppSizes.stepperHeight,
+      width: widget.compact
+          ? AppSizes.stepperWidthCompact
+          : AppSizes.stepperWidth,
+      height: widget.compact
+          ? AppSizes.stepperHeightCompact
+          : AppSizes.stepperHeight,
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.pill),
+        borderRadius: BorderRadius.circular(AppRadius.md),
         border: Border.all(
           color: AppColors.border,
           width: AppSizes.borderWidth,
@@ -38,14 +63,41 @@ class QuantityStepper extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           _StepButton(
-            icon: Icons.remove,
-            onTap: quantity > 1 ? () => onChanged(quantity - 1) : null,
+            icon: Icons.remove_rounded,
+            onTap: quantity > 1 ? () => widget.onChanged(quantity - 1) : null,
           ),
-          Text('$quantity', style: AppTextStyles.title),
+          ClipRect(
+            child: AnimatedSwitcher(
+              duration: AppDurations.selection,
+              switchInCurve: AppCurves.standard,
+              switchOutCurve: AppCurves.standard,
+              transitionBuilder: (child, animation) {
+                final bool incoming =
+                    child.key == ValueKey<int>(widget.quantity);
+                final Offset begin = Offset(
+                  0,
+                  incoming ? direction : -direction,
+                );
+
+                return SlideTransition(
+                  position: Tween<Offset>(
+                    begin: begin,
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: FadeTransition(opacity: animation, child: child),
+                );
+              },
+              child: Text(
+                '$quantity',
+                key: ValueKey<int>(quantity),
+                style: AppTextStyles.title,
+              ),
+            ),
+          ),
           _StepButton(
-            icon: Icons.add,
-            onTap: quantity < maxQuantity
-                ? () => onChanged(quantity + 1)
+            icon: Icons.add_rounded,
+            onTap: quantity < widget.maxQuantity
+                ? () => widget.onChanged(quantity + 1)
                 : null,
           ),
         ],
@@ -70,7 +122,7 @@ class _StepButton extends StatelessWidget {
         child: Icon(
           icon,
           size: AppSizes.iconSm,
-          color: onTap == null ? AppColors.hint : AppColors.goldDark,
+          color: onTap == null ? AppColors.hint : AppColors.textPrimary,
         ),
       ),
     );

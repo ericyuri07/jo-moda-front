@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../core/constants/app_strings.dart';
 import '../core/theme/app_colors.dart';
-import '../core/theme/app_radius.dart';
+import '../core/theme/app_curves.dart';
+import '../core/theme/app_durations.dart';
 import '../core/theme/app_sizes.dart';
 import '../core/theme/app_spacing.dart';
 import '../core/theme/app_text_styles.dart';
 import 'jo_logo.dart';
 
-/// Cabeçalho da loja (Home, Produto, Carrinho): faixa escura da marca com
-/// menu, logo da loja e carrinho; embaixo, a busca em pílula.
+/// Cabeçalho da loja (Home, Produto, Carrinho): faixa branca com menu, logo
+/// e carrinho, e a busca logo abaixo. O número do carrinho "pula" quando
+/// muda.
 class ShopHeader extends StatelessWidget {
   const ShopHeader({
     required this.onMenuTap,
@@ -30,22 +32,20 @@ class ShopHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OutlineInputBorder pill = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(AppRadius.pill),
-      borderSide: BorderSide.none,
-    );
-
     return Container(
       padding: EdgeInsets.fromLTRB(
-        AppSpacing.sm,
+        AppSpacing.xs,
         MediaQuery.paddingOf(context).top + AppSpacing.xs,
-        AppSpacing.sm,
-        AppSpacing.lg,
+        AppSpacing.xs,
+        AppSpacing.md,
       ),
       decoration: const BoxDecoration(
-        color: AppColors.authBackground,
-        borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(AppRadius.xl),
+        color: AppColors.surface,
+        border: Border(
+          bottom: BorderSide(
+            color: AppColors.border,
+            width: AppSizes.borderWidth,
+          ),
         ),
       ),
       child: Column(
@@ -54,8 +54,8 @@ class ShopHeader extends StatelessWidget {
             children: <Widget>[
               IconButton(
                 tooltip: AppStrings.menuTooltip,
-                color: AppColors.gold,
-                icon: const Icon(Icons.menu, size: AppSizes.iconLg),
+                color: AppColors.textPrimary,
+                icon: const Icon(Icons.menu_rounded, size: AppSizes.iconLg),
                 onPressed: onMenuTap,
               ),
               const Expanded(
@@ -63,12 +63,19 @@ class ShopHeader extends StatelessWidget {
               ),
               IconButton(
                 tooltip: AppStrings.cartTooltip,
-                color: AppColors.gold,
+                color: AppColors.textPrimary,
                 onPressed: onCartTap,
                 icon: Badge(
                   isLabelVisible: cartCount > 0,
-                  label: Text('$cartCount'),
-                  backgroundColor: AppColors.accent,
+                  backgroundColor: AppColors.primary,
+                  textColor: AppColors.textOnDark,
+                  label: AnimatedSwitcher(
+                    duration: AppDurations.selection,
+                    switchInCurve: AppCurves.standard,
+                    transitionBuilder: (child, animation) =>
+                        ScaleTransition(scale: animation, child: child),
+                    child: Text('$cartCount', key: ValueKey<int>(cartCount)),
+                  ),
                   child: const Icon(
                     Icons.shopping_bag_outlined,
                     size: AppSizes.iconLg,
@@ -77,7 +84,7 @@ class ShopHeader extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.xs),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             child: TextField(
@@ -86,17 +93,10 @@ class ShopHeader extends StatelessWidget {
               onSubmitted: onSearchSubmitted,
               textInputAction: TextInputAction.search,
               style: AppTextStyles.input,
-              decoration: InputDecoration(
+              cursorColor: AppColors.primary,
+              decoration: const InputDecoration(
                 hintText: AppStrings.searchHint,
-                prefixIcon: const Icon(
-                  Icons.search,
-                  size: AppSizes.iconSm,
-                  color: AppColors.goldDark,
-                ),
-                fillColor: AppColors.surface,
-                border: pill,
-                enabledBorder: pill,
-                focusedBorder: pill,
+                prefixIcon: Icon(Icons.search_rounded, size: AppSizes.iconSm),
               ),
             ),
           ),

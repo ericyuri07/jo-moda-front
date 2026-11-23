@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_strings.dart';
 import '../../core/routes/app_routes.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_sizes.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
@@ -12,11 +11,14 @@ import '../../services/auth_exception.dart';
 import '../../services/service_locator.dart';
 import '../../widgets/app_text_field.dart';
 import '../../widgets/auth_layout.dart';
-import '../../widgets/gold_button.dart';
+import '../../widgets/primary_button.dart';
 
 /// Tela de login (fluxograma: 1).
 class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+  const SignInScreen({this.returnPath, super.key});
+
+  /// Tela da loja para onde voltar (ex.: o carrinho). Sem ela, vai à Home.
+  final String? returnPath;
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
@@ -48,13 +50,15 @@ class _SignInScreenState extends State<SignInScreen> {
         password: _passwordController.text,
       );
 
-      if (mounted) context.goNamed(AppRoutes.home);
+      if (mounted) _backToShop();
     } on AuthException catch (e) {
       _showMessage(e.message);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
+
+  void _backToShop() => context.go(widget.returnPath ?? AppRoutes.homePath);
 
   void _showMessage(String message) {
     if (!mounted) return;
@@ -68,7 +72,10 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     return AuthLayout(
       title: AppStrings.loginTitle,
-      subtitle: AppStrings.signInSubtitle,
+      subtitle: widget.returnPath == AppRoutes.cartPath
+          ? AppStrings.signInToOrder
+          : AppStrings.signInSubtitle,
+      onBack: _backToShop,
       children: <Widget>[
         Form(
           key: _formKey,
@@ -107,7 +114,10 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
               const SizedBox(height: AppSpacing.sm),
               GestureDetector(
-                onTap: () => context.goNamed(AppRoutes.signUp),
+                onTap: () => context.goNamed(
+                  AppRoutes.signUp,
+                  queryParameters: AppRoutes.returnTo(widget.returnPath),
+                ),
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
                   child: Text(
@@ -117,7 +127,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              GoldButton(
+              PrimaryButton(
                 label: AppStrings.signInButton,
                 isLoading: _isLoading,
                 onPressed: _handleSignIn,
@@ -125,12 +135,8 @@ class _SignInScreenState extends State<SignInScreen> {
               const SizedBox(height: AppSpacing.md),
               SizedBox(
                 width: double.infinity,
-                height: AppSizes.goldButtonHeight,
+                height: AppSizes.buttonHeight,
                 child: OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.gold,
-                    side: const BorderSide(color: AppColors.gold),
-                  ),
                   onPressed: _isLoading
                       ? null
                       : () => context.goNamed(AppRoutes.adminSignIn),

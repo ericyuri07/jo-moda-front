@@ -228,12 +228,12 @@ class _AdminCategoriesScreenState extends State<AdminCategoriesScreen> {
               width: AppSizes.adminThumb,
               height: AppSizes.adminThumb,
               alignment: Alignment.center,
-              color: AppColors.authBackground,
+              color: AppColors.surfaceMuted,
               child: (category.imageUrl ?? '').isEmpty
                   ? Text(
                       initial,
                       style: AppTextStyles.sectionHeading.copyWith(
-                        color: AppColors.gold,
+                        color: AppColors.textSecondary,
                       ),
                     )
                   : NetworkImageBox(url: category.imageUrl),

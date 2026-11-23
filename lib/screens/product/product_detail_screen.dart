@@ -5,6 +5,7 @@ import '../../core/constants/app_config.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_curves.dart';
 import '../../core/theme/app_durations.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_sizes.dart';
@@ -15,8 +16,8 @@ import '../../models/product.dart';
 import '../../models/product_variant.dart';
 import '../../services/api_exception.dart';
 import '../../services/service_locator.dart';
-import '../../widgets/app_card.dart';
 import '../../widgets/error_state.dart';
+import '../../widgets/fade_slide_in.dart';
 import '../../widgets/network_image_box.dart';
 import '../../widgets/option_chip.dart';
 import '../../widgets/price_block.dart';
@@ -182,7 +183,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: cartService,
+      listenable: Listenable.merge(<Listenable>[cartService, authService]),
       builder: (context, _) => ShopScaffold(
         cartCount: cartService.totalQuantity,
         user: authService.currentUser,
@@ -224,8 +225,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             child: SizedBox(
               height: AppSizes.galleryHeight,
               width: double.infinity,
-              child: NetworkImageBox(
-                url: gallery.isEmpty ? null : gallery[_imageIndex],
+              child: AnimatedSwitcher(
+                duration: AppDurations.switcher,
+                switchInCurve: AppCurves.standard,
+                switchOutCurve: AppCurves.standard,
+                layoutBuilder: (current, previous) => Stack(
+                  fit: StackFit.expand,
+                  children: <Widget>[...previous, ?current],
+                ),
+                child: NetworkImageBox(
+                  key: ValueKey<int>(_imageIndex),
+                  url: gallery.isEmpty ? null : gallery[_imageIndex],
+                ),
               ),
             ),
           ),
@@ -234,43 +245,47 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         Padding(
           padding: const EdgeInsets.fromLTRB(
             AppSpacing.screenPadding,
-            AppSpacing.lg,
+            AppSpacing.xl,
             AppSpacing.screenPadding,
             0,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(product.name, style: AppTextStyles.productName),
-              const SizedBox(height: AppSpacing.md),
-              PriceBlock(
-                price: product.price,
-                promotionalPrice: product.promotionalPrice,
-                large: true,
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              if (product.colors.isNotEmpty || product.sizes.isNotEmpty)
-                AppCard(child: _buildOptions(product)),
-              if (lowStock) ...<Widget>[
-                const SizedBox(height: AppSpacing.md),
-                Row(
+              FadeSlideIn(
+                index: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const Icon(
-                      Icons.local_fire_department_outlined,
-                      size: AppSizes.iconSm,
-                      color: AppColors.accent,
-                    ),
-                    const SizedBox(width: AppSpacing.xs),
-                    Text(
-                      AppStrings.stockLeft(stock),
-                      style: AppTextStyles.bodyStrong.copyWith(
-                        color: AppColors.accent,
-                      ),
+                    Text(product.name, style: AppTextStyles.productName),
+                    const SizedBox(height: AppSpacing.md),
+                    PriceBlock(
+                      price: product.price,
+                      promotionalPrice: product.promotionalPrice,
+                      large: true,
                     ),
                   ],
                 ),
-              ],
-              const SizedBox(height: AppSpacing.lg),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              if (product.colors.isNotEmpty || product.sizes.isNotEmpty)
+                FadeSlideIn(index: 2, child: _buildOptions(product)),
+              AnimatedSize(
+                duration: AppDurations.selection,
+                curve: AppCurves.standard,
+                child: lowStock
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: AppSpacing.md),
+                        child: Text(
+                          AppStrings.stockLeft(stock),
+                          style: AppTextStyles.bodyStrong.copyWith(
+                            color: AppColors.accent,
+                          ),
+                        ),
+                      )
+                    : const SizedBox(width: double.infinity),
+              ),
+              const SizedBox(height: AppSpacing.xl),
               Row(
                 children: <Widget>[
                   QuantityStepper(
@@ -379,7 +394,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppRadius.md),
               border: Border.all(
-                color: i == _imageIndex ? AppColors.gold : AppColors.border,
+                color: i == _imageIndex
+                    ? AppColors.primary
+                    : AppColors.transparent,
                 width: i == _imageIndex
                     ? AppSizes.borderWidthSelected
                     : AppSizes.borderWidth,
@@ -411,9 +428,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             const SizedBox(width: AppSpacing.md),
         itemBuilder: (context, i) => SizedBox(
           width: AppSizes.relatedCardWidth,
-          child: ProductCard(
-            product: _related[i],
-            onTap: () => _openProduct(_related[i]),
+          child: FadeSlideIn(
+            index: i,
+            child: ProductCard(
+              product: _related[i],
+              onTap: () => _openProduct(_related[i]),
+            ),
           ),
         ),
       ),

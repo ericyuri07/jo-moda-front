@@ -382,10 +382,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: AppSizes.formMaxWidth),
             child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: AppColors.gold,
-              ),
               onPressed: _isSaving || _isUploading ? null : _save,
               icon: _isSaving
                   ? const SizedBox(

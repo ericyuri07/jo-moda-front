@@ -17,9 +17,7 @@ class JoModasApp extends StatefulWidget {
 
 class _JoModasAppState extends State<JoModasApp> {
   late final GoRouter _router = AppRouter.create(
-    initialLocation: authService.isSignedIn
-        ? AppRoutes.homePath
-        : AppRoutes.signInPath,
+    initialLocation: AppRoutes.splashPath,
     refreshListenable: authService,
     isSignedIn: () => authService.isSignedIn,
     isAdmin: () => authService.isAdmin,

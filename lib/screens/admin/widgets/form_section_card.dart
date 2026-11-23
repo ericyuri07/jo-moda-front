@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/app_card.dart';
 
-/// Grupo do formulário de produto em card: ícone dourado, título e campos.
+/// Grupo do formulário de produto em card: ícone discreto, título e campos.
 class FormSectionCard extends StatelessWidget {
   const FormSectionCard({
     required this.title,
@@ -28,19 +27,8 @@ class FormSectionCard extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Container(
-                padding: const EdgeInsets.all(AppSpacing.sm),
-                decoration: BoxDecoration(
-                  color: AppColors.goldSoft,
-                  borderRadius: BorderRadius.circular(AppRadius.sm),
-                ),
-                child: Icon(
-                  icon,
-                  size: AppSizes.iconSm,
-                  color: AppColors.goldDark,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.md),
+              Icon(icon, size: AppSizes.iconSm, color: AppColors.textSecondary),
+              const SizedBox(width: AppSpacing.sm),
               Text(title, style: AppTextStyles.sectionTitle),
             ],
           ),

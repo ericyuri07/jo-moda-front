@@ -50,8 +50,15 @@ abstract final class AppStrings {
   static const String menuAdminProducts = 'Gerenciar produtos';
   static const String menuAdminCategories = 'Gerenciar categorias';
   static const String menuSignOut = 'Sair';
+  static const String menuSignIn = 'Entrar';
+  static const String welcomeGuest = 'Olá!';
+  static const String guestHint = 'Entre na sua conta para fazer pedidos.';
+  static const String backToShop = 'Voltar à loja';
 
   static const String signInSubtitle = 'Que bom ter você de volta.';
+  static const String signInToOrder = 'Entre para finalizar seu pedido.';
+  static const String signUpToOrder =
+      'Crie sua conta para finalizar seu pedido.';
   static const String signUpSubtitle = 'Crie sua conta e aproveite a loja.';
   static const String adminSignInSubtitle =
       'Gerencie produtos, fotos e estoque.';
@@ -101,6 +108,8 @@ abstract final class AppStrings {
   static const String subtotal = 'Subtotal';
   static const String total = 'Total';
   static const String sendWhatsapp = 'Enviar para o WhatsApp';
+  static const String orderReady =
+      'Tudo certo! Agora é só enviar o pedido para o WhatsApp.';
   static const String cepNotFound = 'CEP não encontrado.';
   static const String whatsappError = 'Não foi possível abrir o WhatsApp.';
   static const String fieldAddress = 'O endereço';

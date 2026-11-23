@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../core/theme/app_colors.dart';
+import '../core/theme/app_curves.dart';
 import '../core/theme/app_durations.dart';
 import '../core/theme/app_radius.dart';
 import '../core/theme/app_sizes.dart';
 import '../core/theme/app_spacing.dart';
 import '../core/theme/app_text_styles.dart';
+import 'pressable_scale.dart';
 
-/// Pílula de opção de cor ou tamanho, do tamanho do texto.
-/// Selecionada = preta com texto branco; indisponível = riscada e sem toque.
+/// Opção de cor ou tamanho, do tamanho do texto.
+/// Selecionada = preta com texto branco (troca animada); indisponível =
+/// riscada e sem toque.
 class OptionChip extends StatelessWidget {
   const OptionChip({
     required this.label,
@@ -29,7 +32,7 @@ class OptionChip extends StatelessWidget {
         ? AppColors.primary
         : available
         ? AppColors.surface
-        : AppColors.placeholder;
+        : AppColors.surfaceMuted;
 
     final TextStyle style = selected
         ? AppTextStyles.chip.copyWith(color: AppColors.textOnDark)
@@ -38,15 +41,18 @@ class OptionChip extends StatelessWidget {
         : AppTextStyles.chip.copyWith(
             color: AppColors.hint,
             decoration: TextDecoration.lineThrough,
+            decorationColor: AppColors.hint,
           );
 
-    return Material(
-      color: AppColors.transparent,
-      child: InkWell(
+    return Semantics(
+      button: true,
+      selected: selected,
+      enabled: available,
+      child: PressableScale(
         onTap: available ? onTap : null,
-        borderRadius: BorderRadius.circular(AppRadius.pill),
         child: AnimatedContainer(
           duration: AppDurations.selection,
+          curve: AppCurves.standard,
           constraints: const BoxConstraints(
             minWidth: AppSizes.optionChipMinWidth,
             minHeight: AppSizes.optionChipHeight,
@@ -54,13 +60,20 @@ class OptionChip extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           decoration: BoxDecoration(
             color: background,
-            borderRadius: BorderRadius.circular(AppRadius.pill),
+            borderRadius: BorderRadius.circular(AppRadius.sm),
             border: Border.all(
               color: selected ? AppColors.primary : AppColors.border,
               width: AppSizes.borderWidth,
             ),
           ),
-          child: Center(widthFactor: 1, child: Text(label, style: style)),
+          child: Center(
+            widthFactor: 1,
+            child: AnimatedDefaultTextStyle(
+              duration: AppDurations.selection,
+              style: style,
+              child: Text(label),
+            ),
+          ),
         ),
       ),
     );

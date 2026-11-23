@@ -3,6 +3,7 @@ import 'api_client.dart';
 import 'auth_service.dart';
 import 'cart_service.dart';
 import 'category_service.dart';
+import 'checkout_draft.dart';
 import 'image_upload_service.dart';
 import 'photo_uploader.dart';
 import 'product_image_service.dart';
@@ -26,11 +27,13 @@ final ProductService productService = ProductService(
 final ImageUploadService imageUploadService = ImageUploadService(apiClient);
 final PhotoUploader photoUploader = PhotoUploader(imageUploadService);
 final CartService cartService = CartService();
+final CheckoutDraftStore checkoutDraft = CheckoutDraftStore();
 final AddressService addressService = AddressService();
 final WhatsappService whatsappService = WhatsappService();
 
 /// Encerra a sessão e esvazia o carrinho salvo no aparelho.
 Future<void> signOutAndClearCart() async {
+  checkoutDraft.clear();
   await authService.signOut();
   await cartService.clear();
 }

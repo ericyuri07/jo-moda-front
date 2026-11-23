@@ -11,7 +11,7 @@ import '../../services/auth_exception.dart';
 import '../../services/service_locator.dart';
 import '../../widgets/app_text_field.dart';
 import '../../widgets/auth_layout.dart';
-import '../../widgets/gold_button.dart';
+import '../../widgets/primary_button.dart';
 
 /// Login do administrador, separado do login de cliente. Só aceita contas
 /// com perfil admin e entra direto no painel de produtos.
@@ -118,7 +118,7 @@ class _AdminSignInScreenState extends State<AdminSignInScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              GoldButton(
+              PrimaryButton(
                 label: AppStrings.signInButton,
                 isLoading: _isLoading,
                 onPressed: _handleSignIn,
