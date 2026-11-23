@@ -16,7 +16,7 @@ abstract final class AppConfig {
   /// Número da loja que recebe o pedido, no formato internacional, só dígitos.
   static const String storeWhatsapp = String.fromEnvironment(
     'STORE_WHATSAPP',
-    defaultValue: '5542900000000',
+    defaultValue: '5542999991773',
   );
 
   static const String viaCepBaseUrl = 'https://viacep.com.br/ws';
