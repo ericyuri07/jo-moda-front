@@ -51,6 +51,7 @@ abstract final class AppSizes {
   static const double photoPreviewHeight = 160;
   static const double actionButton = 40;
   static const double formMaxWidth = 600;
+  static const double suggestionPickerHeight = 420;
 
   static const double authMaxWidth = 380;
   static const double buttonHeight = 52;

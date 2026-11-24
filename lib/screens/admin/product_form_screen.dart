@@ -25,6 +25,8 @@ import '../../widgets/labeled_field.dart';
 import 'widgets/extra_image_tile.dart';
 import 'widgets/form_section_card.dart';
 import 'widgets/photo_picker_field.dart';
+import 'widgets/suggestion_picker_dialog.dart';
+import 'widgets/suggestion_tile.dart';
 import 'widgets/variant_stock_row.dart';
 
 /// Formulário de produto: cria (sem `productId`) ou edita (com `productId`).
@@ -105,6 +107,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   final List<String> _removedVariantIds = <String>[];
   final List<_ImageDraft> _images = <_ImageDraft>[];
   final List<String> _removedImageIds = <String>[];
+  List<Product> _suggestions = const <Product>[];
 
   bool _isLoading = true;
   bool _isSaving = false;
@@ -112,6 +115,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   /// Qual foto está sendo enviada: a principal ou uma extra.
   bool _isUploadingMain = false;
   bool _isUploadingExtra = false;
+  bool _isLoadingSuggestions = false;
   String? _errorMessage;
 
   bool get _isUploading => _isUploadingMain || _isUploadingExtra;
@@ -180,6 +184,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     _categoryId = product.categoryId;
     _featured = product.featured;
     _active = product.active;
+    _suggestions = product.suggestions;
 
     for (final _VariantDraft draft in _variants) {
       draft.stockController.dispose();
@@ -309,6 +314,41 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     });
   }
 
+  /// Abre a lista de produtos para escolher os do "Veja também".
+  Future<void> _chooseSuggestions() async {
+    setState(() => _isLoadingSuggestions = true);
+
+    try {
+      final List<Product> options = (await productService.getAdminProducts())
+          .where((p) => p.id != widget.productId)
+          .toList();
+      if (!mounted) return;
+
+      if (options.isEmpty) {
+        _showMessage(AppStrings.suggestionsNoOptions);
+        return;
+      }
+
+      final List<Product>? chosen = await showDialog<List<Product>>(
+        context: context,
+        builder: (_) =>
+            SuggestionPickerDialog(products: options, selected: _suggestions),
+      );
+      if (mounted && chosen != null) setState(() => _suggestions = chosen);
+    } on ApiException catch (e) {
+      _showMessage(e.message);
+    } finally {
+      if (mounted) setState(() => _isLoadingSuggestions = false);
+    }
+  }
+
+  void _removeSuggestion(Product product) {
+    setState(
+      () =>
+          _suggestions = _suggestions.where((p) => p.id != product.id).toList(),
+    );
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -324,6 +364,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         imageUrl: _mainImageUrl,
         featured: _featured,
         active: _active,
+        suggestionIds: _suggestions.map((p) => p.id).toList(),
         variants: <VariantInput>[
           for (final _VariantDraft draft in _variants)
             if (draft.needsSaving) draft.toInput(),
@@ -438,6 +479,8 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
               _buildVariantSection(),
               const SizedBox(height: AppSpacing.lg),
               _buildImageSection(),
+              const SizedBox(height: AppSpacing.lg),
+              _buildSuggestionSection(),
               const SizedBox(height: AppSpacing.lg),
             ],
           ),
@@ -603,6 +646,38 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
           onPressed: _generateVariants,
           icon: const Icon(Icons.add),
           label: const Text(AppStrings.variantsGenerateButton),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSuggestionSection() {
+    return FormSectionCard(
+      title: AppStrings.suggestionsTitle,
+      icon: Icons.auto_awesome_outlined,
+      children: <Widget>[
+        if (_suggestions.isEmpty)
+          const Text(AppStrings.suggestionsEmpty, style: AppTextStyles.caption)
+        else
+          for (final Product product in _suggestions)
+            SuggestionTile(
+              key: ValueKey<String>(product.id),
+              product: product,
+              onRemove: () => _removeSuggestion(product),
+            ),
+        const SizedBox(height: AppSpacing.md),
+        OutlinedButton.icon(
+          onPressed: _isLoadingSuggestions ? null : _chooseSuggestions,
+          icon: _isLoadingSuggestions
+              ? const SizedBox(
+                  width: AppSizes.spinner,
+                  height: AppSizes.spinner,
+                  child: CircularProgressIndicator(
+                    strokeWidth: AppSizes.borderWidthSelected,
+                  ),
+                )
+              : const Icon(Icons.playlist_add),
+          label: const Text(AppStrings.suggestionsChoose),
         ),
       ],
     );

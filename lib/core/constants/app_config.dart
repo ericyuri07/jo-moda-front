@@ -27,6 +27,9 @@ abstract final class AppConfig {
 
   static const int maxQuantity = 99;
 
+  /// Máximo de produtos no "Veja também" (mesmo limite do back-end).
+  static const int maxSuggestions = 6;
+
   /// Tempo máximo de espera por uma resposta da API ou do ViaCEP.
   static const Duration requestTimeout = Duration(seconds: 15);
 

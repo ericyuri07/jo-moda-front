@@ -10,6 +10,7 @@ abstract final class AppStrings {
   static const String cancel = 'Cancelar';
   static const String delete = 'Excluir';
   static const String save = 'Salvar';
+  static const String confirm = 'Confirmar';
   static const String menuTooltip = 'Menu';
   static const String cartTooltip = 'Carrinho';
   static const String editTooltip = 'Editar';
@@ -193,6 +194,14 @@ abstract final class AppStrings {
   static const String extraImagesEmpty = 'Nenhuma foto extra.';
   static const String extraImageAdd = 'Adicionar foto';
   static const String removeImageTooltip = 'Remover foto';
+  static const String suggestionsTitle = 'Combina com';
+  static const String suggestionsEmpty =
+      'Nenhum escolhido: a loja mostra outros da mesma categoria.';
+  static const String suggestionsChoose = 'Escolher produtos';
+  static const String suggestionsSearchHint = 'Buscar produto';
+  static const String suggestionsNoOptions =
+      'Cadastre outros produtos para poder sugerir.';
+  static const String removeSuggestionTooltip = 'Remover sugestão';
   static const String productDetailsError =
       'Produto salvo, mas houve erro no estoque ou nas fotos:';
   static const String fieldProductName = 'O nome';
@@ -229,6 +238,9 @@ abstract final class AppStrings {
 
   static String cartItemsCount(int count) =>
       count == 1 ? '1 item' : '$count itens';
+
+  static String suggestionsCount(int count, int max) =>
+      '$count de $max escolhidos';
 
   static String adminStock(int count) => 'Estoque: $count';
 

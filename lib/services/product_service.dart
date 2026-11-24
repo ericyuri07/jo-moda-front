@@ -1,3 +1,4 @@
+import '../core/constants/app_config.dart';
 import '../core/constants/app_strings.dart';
 import '../models/product.dart';
 import '../models/product_input.dart';
@@ -20,7 +21,7 @@ class ProductService {
   final ProductVariantService _variants;
   final ProductImageService _images;
 
-  static const int _relatedLimit = 6;
+  static const int _relatedLimit = AppConfig.maxSuggestions;
 
   /// Produtos ativos da loja, já com variações e imagens.
   Future<List<Product>> getProducts() async {
@@ -32,9 +33,14 @@ class ProductService {
     return _parseOne(await _api.get('/products/$id'));
   }
 
-  /// Outros produtos da mesma categoria ("Veja também"). Usa o filtro da API,
-  /// sem baixar o catálogo inteiro.
+  /// "Veja também": os escolhidos no admin ou, sem escolha, outros da mesma
+  /// categoria (com o filtro da API, sem baixar o catálogo inteiro).
   Future<List<Product>> getRelated(Product product) async {
+    final List<Product> chosen = product.suggestions
+        .where((p) => p.active)
+        .toList();
+    if (chosen.isNotEmpty) return chosen;
+
     final String category = Uri.encodeQueryComponent(product.categoryId);
     final dynamic data = await _api.get('/products?category_id=$category');
     final dynamic raw = data is Map<String, dynamic> ? data['data'] : data;

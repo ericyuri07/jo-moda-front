@@ -17,6 +17,7 @@ class Product {
     this.active = true,
     this.variants = const <ProductVariant>[],
     this.images = const <ProductImage>[],
+    this.suggestions = const <Product>[],
   });
 
   final String id;
@@ -31,6 +32,9 @@ class Product {
   final bool active;
   final List<ProductVariant> variants;
   final List<ProductImage> images;
+
+  /// Produtos escolhidos no admin para o "Veja também", em ordem.
+  final List<Product> suggestions;
 
   /// Promoção só vale se for menor que o preço (mesma regra do back-end).
   bool get hasPromotion =>
@@ -79,6 +83,9 @@ class Product {
       images: ((json['images'] as List<dynamic>?) ?? <dynamic>[])
           .map((e) => ProductImage.fromJson(e as Map<String, dynamic>))
           .toList(),
+      suggestions: ((json['suggestions'] as List<dynamic>?) ?? <dynamic>[])
+          .map((e) => Product.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -95,5 +102,6 @@ class Product {
     'active': active,
     'variants': variants.map((v) => v.toJson()).toList(),
     'images': images.map((i) => i.toJson()).toList(),
+    'suggestions': suggestions.map((p) => p.toJson()).toList(),
   };
 }
